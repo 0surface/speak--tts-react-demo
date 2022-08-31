@@ -15,48 +15,37 @@ const SpeakerTts = () => {
     const [selectedLang, setSelectedLang] = useState();
     const [langOptions, setLangOptions] = useState([]);
 
+    const SpeechSynthesis = () => {
+        const speech = new Speech();
+        speech.init({
+            volume: 0.5,
+            lang: 'en-GB',
+            rate: 1,
+            pitch: 1,
+            voice: 'Google UK English Male',
+            splitSentences: false,
+            listeners: {
+                onvoiceschanged: (voices) => {
+                    console.log('Voices changed', voices);
+                },
+            },
+        });
+        return speech;
+    };
     useEffect(() => {
         const init = () => {
             const speech = new Speech();
-            speech
-                .init({
-                    volume: 0.5,
-                    lang: 'en-GB',
-                    rate: 1,
-                    pitch: 1,
-                    voice: 'Google UK English Male',
-                    splitSentences: false,
-                    listeners: {
-                        // onvoiceschanged: (voices) => {
-                        //     console.log('Voices changed', voices);
-                        // },
-                    },
-                })
-                .then((data) => {
-                    console.log('Speech is ready', data);
-                    _addVoicesList(data.voices);
-                    //_prepareSpeakButton(speech);
-                    // handlePlay(speech);
-                })
-                .catch((e) => {
-                    console.error('An error occured while initializing : ', e);
-                });
+
             speech.hasBrowserSupport() &&
                 setSupportStatus(
                     'Hurray, your browser supports speech synthesis'
                 );
-            return speech;
-        };
-
-        let x = init();
-        setCurrSpeech(x);
-        return () => {
-            console.log('useeffect!');
         };
     }, []);
 
     const speak = (utternace) => {
-        currspeech
+        const speechUtternace = SpeechSynthesis();
+        speechUtternace
             .speak({
                 text: utternace,
             })
@@ -107,9 +96,7 @@ const SpeakerTts = () => {
         console.log('utternaceArray', utternaceArray);
 
         utternaceArray.forEach((utter) => {
-            setTimeout(() => {
-                speak(utter);
-            }, 0);
+            speak(utter);
         });
     };
 
